@@ -1,0 +1,48 @@
+
+> vibe-generated-app@1.0.0 dev
+> vite
+
+
+  VITE v5.4.20  ready in 272 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://172.20.7.138:3000/
+6:11:17 AM [vite] Pre-transform error: Failed to resolve import "prop-types" from "src/components/ChessBoard.jsx". Does the file exist?
+6:11:18 AM [vite] Internal server error: Failed to resolve import "prop-types" from "src/components/ChessBoard.jsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /home/workspace/src/components/ChessBoard.jsx:2:22
+  1  |  import { jsxDEV } from "react/jsx-dev-runtime";
+  2  |  import { useEffect, useMemo, useRef } from "react";
+  3  |  import PropTypes from "prop-types";
+     |                         ^
+  4  |  const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
+  5  |  const ranks = ["8", "7", "6", "5", "4", "3", "2", "1"];
+      at TransformPluginContext._formatError (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:49258:41)
+      at TransformPluginContext.error (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:49253:16)
+      at normalizeUrl (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:64306:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:64438:39
+      at async Promise.all (index 2)
+      at async TransformPluginContext.transform (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:64365:7)
+      at async PluginContainer.transform (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:49099:18)
+      at async loadAndTransform (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:51977:27)
+      at async viteTransformMiddleware (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:62105:24)
+6:11:53 AM [vite] Internal server error: Failed to resolve import "prop-types" from "src/components/ChessBoard.jsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /home/workspace/src/components/ChessBoard.jsx:2:22
+  1  |  import { jsxDEV } from "react/jsx-dev-runtime";
+  2  |  import { useEffect, useMemo, useRef } from "react";
+  3  |  import PropTypes from "prop-types";
+     |                         ^
+  4  |  const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
+  5  |  const ranks = ["8", "7", "6", "5", "4", "3", "2", "1"];
+      at TransformPluginContext._formatError (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:49258:41)
+      at TransformPluginContext.error (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:49253:16)
+      at normalizeUrl (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:64306:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:64438:39
+      at async Promise.all (index 2)
+      at async TransformPluginContext.transform (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:64365:7)
+      at async PluginContainer.transform (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:49099:18)
+      at async loadAndTransform (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:51977:27)
+      at async viteTransformMiddleware (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:62105:24)

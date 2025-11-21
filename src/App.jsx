@@ -1,73 +1,102 @@
-function App() {
+import { useEffect, useMemo, useState } from 'react'
+import Hero from './components/Hero'
+import ChessBoard from './components/ChessBoard'
+import Controls from './components/Controls'
+
+const API = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
+
+export default function App() {
+  const [fen, setFen] = useState('rn1qkbnr/ppp1pppp/8/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 1 3')
+  const [aiElo, setAiElo] = useState(1200)
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState('Choose an ELO and start a new game!')
+  const [lastMove, setLastMove] = useState(null)
+  const [selected, setSelected] = useState(null)
+  const [legalMoves, setLegalMoves] = useState([])
+
+  const turn = useMemo(() => fen.split(' ')[1] === 'w' ? 'white' : 'black', [fen])
+
+  const startGame = async (elo) => {
+    setLoading(true)
+    setMessage('Setting up your game...')
+    try {
+      const res = await fetch(`${API}/api/new-game`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ elo })
+      })
+      const data = await res.json()
+      setFen(data.fen)
+      setAiElo(data.ai_elo)
+      setLegalMoves(data.legal_moves || [])
+      setMessage('Your move!')
+      setSelected(null)
+      setLastMove(null)
+    } catch (e) {
+      setMessage('Failed to start game.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const resetGame = () => {
+    setFen('rn1qkbnr/ppp1pppp/8/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 1 3')
+    setMessage('Choose an ELO and start a new game!')
+    setSelected(null)
+    setLastMove(null)
+    setLegalMoves([])
+  }
+
+  const coordToUci = (from, to) => {
+    return `${from}${to}`
+  }
+
+  const onSquareClick = async (sq) => {
+    // very minimal move builder: select from then to, then send to backend in UCI
+    if (!selected) {
+      setSelected(sq)
+      return
+    }
+    const from = selected
+    const to = sq
+    if (from === to) { setSelected(null); return }
+    setSelected(null)
+
+    try {
+      const moveUci = coordToUci(from, to)
+      const res = await fetch(`${API}/api/move`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fen, move: moveUci, ai_elo: aiElo })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setFen(data.fen)
+        setLastMove({ from, to: to })
+        setLegalMoves(data.legal_moves || [])
+        if (data.result) {
+          setMessage(`Game Over: ${data.result}`)
+        } else {
+          setMessage('Your move!')
+        }
+      } else {
+        setMessage(data.detail || 'Illegal move')
+      }
+    } catch (e) {
+      setMessage('Failed to play move')
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Subtle pattern overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05),transparent_50%)]"></div>
-
-      <div className="relative min-h-screen flex items-center justify-center p-8">
-        <div className="max-w-2xl w-full">
-          {/* Header with Flames icon */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center mb-6">
-              <img
-                src="/flame-icon.svg"
-                alt="Flames"
-                className="w-24 h-24 drop-shadow-[0_0_25px_rgba(59,130,246,0.5)]"
-              />
-            </div>
-
-            <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
-              Flames Blue
-            </h1>
-
-            <p className="text-xl text-blue-200 mb-6">
-              Build applications through conversation
-            </p>
-          </div>
-
-          {/* Instructions */}
-          <div className="bg-slate-800/50 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-8 shadow-xl mb-6">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center font-bold">
-                1
-              </div>
-              <div>
-                <h3 className="font-semibold text-white mb-1">Describe your idea</h3>
-                <p className="text-blue-200/80 text-sm">Use the chat panel on the left to tell the AI what you want to build</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 mb-6">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center font-bold">
-                2
-              </div>
-              <div>
-                <h3 className="font-semibold text-white mb-1">Watch it build</h3>
-                <p className="text-blue-200/80 text-sm">Your app will appear in this preview as the AI generates the code</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center font-bold">
-                3
-              </div>
-              <div>
-                <h3 className="font-semibold text-white mb-1">Refine and iterate</h3>
-                <p className="text-blue-200/80 text-sm">Continue the conversation to add features and make changes</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="text-center">
-            <p className="text-sm text-blue-300/60">
-              No coding required • Just describe what you want
-            </p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white">
+      <Hero />
+      <div className="relative z-10 container mx-auto px-6 pb-24 -mt-20">
+        <div className="flex flex-col items-center gap-6">
+          <Controls onStart={startGame} onReset={resetGame} loading={loading} defaultElo={aiElo} />
+          <ChessBoard fen={fen} onSquareClick={onSquareClick} lastMove={lastMove} />
+          <p className="text-white/80">{message}</p>
         </div>
       </div>
     </div>
   )
 }
-
-export default App
